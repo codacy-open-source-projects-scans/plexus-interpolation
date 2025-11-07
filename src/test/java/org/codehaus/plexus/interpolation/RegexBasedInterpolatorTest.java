@@ -1,22 +1,5 @@
 package org.codehaus.plexus.interpolation;
 
-/*
- * Copyright 2001-2008 Codehaus Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class RegexBasedInterpolatorTest {
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         EnvarBasedValueSource.resetStatics();
     }
 
@@ -40,7 +23,7 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testShouldFailOnExpressionCycle() {
+    void shouldFailOnExpressionCycle() {
         Properties props = new Properties();
         props.setProperty("key1", "${key2}");
         props.setProperty("key2", "${key1}");
@@ -58,7 +41,7 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testShouldResolveByMy_getVar_Method() throws InterpolationException {
+    void shouldResolveByMyGetVarMethod() throws Exception {
         RegexBasedInterpolator rbi = new RegexBasedInterpolator();
         rbi.addValueSource(new ObjectBasedValueSource(this));
         String result = rbi.interpolate("this is a ${this.var}", "this");
@@ -67,10 +50,10 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testShouldResolveByContextValue() throws InterpolationException {
+    void shouldResolveByContextValue() throws Exception {
         RegexBasedInterpolator rbi = new RegexBasedInterpolator();
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap();
         context.put("var", "testVar");
 
         rbi.addValueSource(new MapBasedValueSource(context));
@@ -81,7 +64,7 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testDelimitersPassedToValueSource() throws InterpolationException {
+    void delimitersPassedToValueSource() throws Exception {
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
         interpolator.addValueSource(new AbstractValueSource(false) {
 
@@ -103,13 +86,11 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testShouldResolveByEnvar() throws IOException, InterpolationException {
-        OperatingSystemUtils.setEnvVarSource(new OperatingSystemUtils.EnvVarSource() {
-            public Map<String, String> getEnvMap() {
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put("SOME_ENV", "variable");
-                return map;
-            }
+    void shouldResolveByEnvar() throws Exception {
+        OperatingSystemUtils.setEnvVarSource(() -> {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("SOME_ENV", "variable");
+            return map;
         });
 
         RegexBasedInterpolator rbi = new RegexBasedInterpolator();
@@ -122,10 +103,10 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testUseAlternateRegex() throws Exception {
+    void useAlternateRegex() throws Exception {
         RegexBasedInterpolator rbi = new RegexBasedInterpolator("\\@\\{(", ")?([^}]+)\\}@");
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("var", "testVar");
 
         rbi.addValueSource(new MapBasedValueSource(context));
@@ -136,10 +117,10 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testNPEFree() throws Exception {
+    void npeFree() throws Exception {
         RegexBasedInterpolator rbi = new RegexBasedInterpolator("\\@\\{(", ")?([^}]+)\\}@");
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("var", "testVar");
 
         rbi.addValueSource(new MapBasedValueSource(context));
@@ -150,19 +131,15 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testUsePostProcessor_DoesNotChangeValue() throws InterpolationException {
+    void usePostProcessorDoesNotChangeValue() throws Exception {
         RegexBasedInterpolator rbi = new RegexBasedInterpolator();
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("test.var", "testVar");
 
         rbi.addValueSource(new MapBasedValueSource(context));
 
-        rbi.addPostProcessor(new InterpolationPostProcessor() {
-            public Object execute(String expression, Object value) {
-                return null;
-            }
-        });
+        rbi.addPostProcessor((expression, value) -> null);
 
         String result = rbi.interpolate("this is a ${test.var}", "");
 
@@ -170,7 +147,7 @@ public class RegexBasedInterpolatorTest {
     }
 
     @Test
-    public void testUsePostProcessor_ChangesValue() throws InterpolationException {
+    void usePostProcessorChangesValue() throws Exception {
 
         int loopNumber = 200000;
 
@@ -178,16 +155,12 @@ public class RegexBasedInterpolatorTest {
 
         RegexBasedInterpolator rbi = new RegexBasedInterpolator();
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("test.var", "testVar");
 
         rbi.addValueSource(new MapBasedValueSource(context));
 
-        rbi.addPostProcessor(new InterpolationPostProcessor() {
-            public Object execute(String expression, Object value) {
-                return value + "2";
-            }
-        });
+        rbi.addPostProcessor((expression, value) -> value + "2");
 
         for (int i = 0, number = loopNumber; i < number; i++) {
 
@@ -205,11 +178,7 @@ public class RegexBasedInterpolatorTest {
 
         rbi = new RegexBasedInterpolator(true);
 
-        rbi.addPostProcessor(new InterpolationPostProcessor() {
-            public Object execute(String expression, Object value) {
-                return value + "2";
-            }
-        });
+        rbi.addPostProcessor((expression, value) -> value + "2");
 
         rbi.addValueSource(new MapBasedValueSource(context));
 
@@ -222,5 +191,74 @@ public class RegexBasedInterpolatorTest {
         end = System.currentTimeMillis();
 
         System.out.println("time with pattern reuse and RegexBasedInterpolator instance reuse " + (end - start));
+    }
+
+    @Test
+    void cacheAnswersTrue() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
+        ctx.put("key", "value");
+
+        final int[] valueSourceCallCount = {0};
+
+        ValueSource vs = new AbstractValueSource(false) {
+            @Override
+            public Object getValue(String expression) {
+                valueSourceCallCount[0]++;
+                return ctx.get(expression);
+            }
+        };
+
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        interpolator.setCacheAnswers(true);
+        interpolator.addValueSource(vs);
+
+        // First interpolation
+        String result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+        assertEquals("value-value-value-value", result);
+        assertEquals(1, valueSourceCallCount[0]);
+
+        // Second interpolation - cache should be used, no new ValueSource calls
+        result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+        assertEquals("value-value-value-value", result);
+        assertEquals(1, valueSourceCallCount[0]); // still 1, cache was used
+
+        // Third interpolation with different expression that also uses cached value
+        result = interpolator.interpolate("The value is ${key}");
+        assertEquals("The value is value", result);
+        assertEquals(1, valueSourceCallCount[0]); // still 1, cache was used
+    }
+
+    @Test
+    void cacheAnswersFalse() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
+        ctx.put("key", "value");
+
+        final int[] valueSourceCallCount = {0};
+
+        ValueSource vs = new AbstractValueSource(false) {
+            @Override
+            public Object getValue(String expression) {
+                valueSourceCallCount[0]++;
+                return ctx.get(expression);
+            }
+        };
+
+        RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+        interpolator.addValueSource(vs);
+
+        // First interpolation
+        String result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+        assertEquals("value-value-value-value", result);
+        assertEquals(1, valueSourceCallCount[0]);
+
+        // Second interpolation - without caching, ValueSource is called again
+        result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+        assertEquals("value-value-value-value", result);
+        assertEquals(2, valueSourceCallCount[0]); // incremented to 2
+
+        // Third interpolation
+        result = interpolator.interpolate("The value is ${key}");
+        assertEquals("The value is value", result);
+        assertEquals(3, valueSourceCallCount[0]); // incremented to 3
     }
 }

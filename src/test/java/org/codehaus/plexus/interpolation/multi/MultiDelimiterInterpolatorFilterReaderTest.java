@@ -1,27 +1,19 @@
 package org.codehaus.plexus.interpolation.multi;
 
 /*
- * The MIT License
+ * Copyright 2001-2009 Codehaus Foundation.
  *
- * Copyright (c) 2004, The Codehaus
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import java.io.StringReader;
@@ -46,14 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author cstamas
  *
  */
-public class MultiDelimiterInterpolatorFilterReaderTest {
+class MultiDelimiterInterpolatorFilterReaderTest {
     /*
      * Added and commented by jdcasey@03-Feb-2005 because it is a bug in the InterpolationFilterReader.
      * kenneyw@15-04-2005 fixed the bug.
      */
     @Test
-    public void testShouldNotInterpolateExpressionAtEndOfDataWithInvalidEndToken() throws Exception {
-        Map m = new HashMap();
+    void shouldNotInterpolateExpressionAtEndOfDataWithInvalidEndToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("test", "TestValue");
 
         String testStr = "This is a ${test";
@@ -65,8 +57,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
      * kenneyw@14-04-2005 Added test to check above fix.
      */
     @Test
-    public void testShouldNotInterpolateExpressionWithMissingEndToken() throws Exception {
-        Map m = new HashMap();
+    void shouldNotInterpolateExpressionWithMissingEndToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("test", "TestValue");
 
         String testStr = "This is a ${test, really";
@@ -75,8 +67,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testShouldNotInterpolateWithMalformedStartToken() throws Exception {
-        Map m = new HashMap();
+    void shouldNotInterpolateWithMalformedStartToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("test", "testValue");
 
         String foo = "This is a $!test} again";
@@ -85,8 +77,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testShouldNotInterpolateWithMalformedEndToken() throws Exception {
-        Map m = new HashMap();
+    void shouldNotInterpolateWithMalformedEndToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("test", "testValue");
 
         String foo = "This is a ${test!} again";
@@ -95,8 +87,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testDefaultInterpolationWithNonInterpolatedValueAtEnd() throws Exception {
-        Map m = new HashMap();
+    void defaultInterpolationWithNonInterpolatedValueAtEnd() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -106,8 +98,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testDefaultInterpolationWithInterpolatedValueAtEnd() throws Exception {
-        Map m = new HashMap();
+    void defaultInterpolationWithInterpolatedValueAtEnd() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -117,8 +109,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testInterpolationWithInterpolatedValueAtEndWithCustomToken() throws Exception {
-        Map m = new HashMap();
+    void interpolationWithInterpolatedValueAtEndWithCustomToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -128,8 +120,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testInterpolationWithInterpolatedValueAtEndWithCustomTokenAndCustomString() throws Exception {
-        Map m = new HashMap();
+    void interpolationWithInterpolatedValueAtEndWithCustomTokenAndCustomString() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -139,8 +131,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testEscape() throws Exception {
-        Map m = new HashMap();
+    void escape() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -150,8 +142,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testEscapeAtStart() throws Exception {
-        Map m = new HashMap();
+    void escapeAtStart() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -161,8 +153,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testEscapeOnlyAtStart() throws Exception {
-        Map m = new HashMap();
+    void escapeOnlyAtStart() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -173,8 +165,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testEscapeOnlyAtStartDefaultToken() throws Exception {
-        Map m = new HashMap();
+    void escapeOnlyAtStartDefaultToken() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("noun", "asshole");
 
@@ -185,15 +177,15 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testShouldDetectRecursiveExpressionPassingThroughTwoPrefixes() throws Exception {
-        List prefixes = new ArrayList();
+    void shouldDetectRecursiveExpressionPassingThroughTwoPrefixes() throws Exception {
+        List<String> prefixes = new ArrayList<>();
 
         prefixes.add("prefix1");
         prefixes.add("prefix2");
 
         RecursionInterceptor ri = new PrefixAwareRecursionInterceptor(prefixes, false);
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("name", "${prefix2.name}");
 
         String input = "${prefix1.name}";
@@ -217,14 +209,14 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testShouldDetectRecursiveExpressionWithPrefixAndWithout() throws Exception {
-        List prefixes = new ArrayList();
+    void shouldDetectRecursiveExpressionWithPrefixAndWithout() throws Exception {
+        List<String> prefixes = new ArrayList<>();
 
         prefixes.add("prefix1");
 
         RecursionInterceptor ri = new PrefixAwareRecursionInterceptor(prefixes, false);
 
-        Map context = new HashMap();
+        Map<String, String> context = new HashMap<>();
         context.put("name", "${prefix1.name}");
 
         String input = "${name}";
@@ -248,8 +240,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testInterpolationWithMultipleTokenTypes() throws Exception {
-        Map m = new HashMap();
+    void interpolationWithMultipleTokenTypes() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("otherName", "@name@");
 
@@ -259,8 +251,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     }
 
     @Test
-    public void testInterpolationWithMultipleTokenTypes_ReversedOrdering() throws Exception {
-        Map m = new HashMap();
+    void interpolationWithMultipleTokenTypesReversedOrdering() throws Exception {
+        Map<String, String> m = new HashMap<>();
         m.put("name", "jason");
         m.put("otherName", "${name}");
 
@@ -273,11 +265,11 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
     //
     // ----------------------------------------------------------------------
 
-    private String interpolate(String input, Map context) throws Exception {
+    private String interpolate(String input, Map<String, String> context) throws Exception {
         return interpolate(input, context, null);
     }
 
-    private String interpolate(String input, Map context, String escapeStr) throws Exception {
+    private String interpolate(String input, Map<String, String> context, String escapeStr) throws Exception {
         Interpolator interpolator = new StringSearchInterpolator();
 
         interpolator.addValueSource(new MapBasedValueSource(context));
@@ -298,7 +290,8 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
         return buf.toString();
     }
 
-    private String interpolate(String input, Map context, String beginToken, String endToken) throws Exception {
+    private String interpolate(String input, Map<String, String> context, String beginToken, String endToken)
+            throws Exception {
         StringSearchInterpolator interpolator = new StringSearchInterpolator(beginToken, endToken);
 
         interpolator.addValueSource(new MapBasedValueSource(context));
@@ -319,7 +312,7 @@ public class MultiDelimiterInterpolatorFilterReaderTest {
         return buf.toString();
     }
 
-    private String interpolateMulti(String input, Map context, String[] specs) throws Exception {
+    private String interpolateMulti(String input, Map<String, String> context, String[] specs) throws Exception {
         MultiDelimiterStringSearchInterpolator interp = new MultiDelimiterStringSearchInterpolator();
         interp.addValueSource(new MapBasedValueSource(context));
 

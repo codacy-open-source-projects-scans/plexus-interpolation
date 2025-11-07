@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.plexus.interpolation.AbstractValueSource;
-import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.ValueSource;
 import org.junit.jupiter.api.Test;
@@ -28,11 +27,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MultiDelimiterStringSearchInterpolatorTest {
+class MultiDelimiterStringSearchInterpolatorTest {
 
     @Test
-    public void testInterpolationWithDifferentDelimiters() throws InterpolationException {
-        Map ctx = new HashMap();
+    void interpolationWithDifferentDelimiters() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("name", "User");
         ctx.put("otherName", "@name@");
 
@@ -49,9 +48,8 @@ public class MultiDelimiterStringSearchInterpolatorTest {
     }
 
     @Test
-    public void testSuccessiveInterpolationWithDifferentDelimiters_ReversedDelimiterSequence()
-            throws InterpolationException {
-        Map ctx = new HashMap();
+    void successiveInterpolationWithDifferentDelimitersReversedDelimiterSequence() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("name", "User");
         ctx.put("otherName", "${name}");
 
@@ -68,8 +66,8 @@ public class MultiDelimiterStringSearchInterpolatorTest {
     }
 
     @Test
-    public void testInterpolationWithMultipleEscapes() throws InterpolationException {
-        Map ctx = new HashMap();
+    void interpolationWithMultipleEscapes() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("name", "User");
         ctx.put("otherName", "##${first} and #${last}");
 
@@ -86,8 +84,8 @@ public class MultiDelimiterStringSearchInterpolatorTest {
     }
 
     @Test
-    public void testInterpolationWithMultipleEscapes2() throws InterpolationException {
-        Map ctx = new HashMap();
+    void interpolationWithMultipleEscapes2() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("name", "User");
         ctx.put("otherName", "#${first} and ##${last}");
 
@@ -104,8 +102,8 @@ public class MultiDelimiterStringSearchInterpolatorTest {
     }
 
     @Test
-    public void testInterpolationWithMultipleEscapes3() throws InterpolationException {
-        Map ctx = new HashMap();
+    void interpolationWithMultipleEscapes3() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("name", "User");
         ctx.put("last", "beer");
         ctx.put("otherName", "###${first} and ##${second} and ${last}");
@@ -123,7 +121,7 @@ public class MultiDelimiterStringSearchInterpolatorTest {
     }
 
     @Test
-    public void testDelimitersPassedToValueSource() throws InterpolationException {
+    void delimitersPassedToValueSource() throws Exception {
         ValueSource vs = new AbstractValueSource(false) {
 
             @Override
@@ -145,5 +143,63 @@ public class MultiDelimiterStringSearchInterpolatorTest {
         interpolator.addDelimiterSpec("#(*)");
 
         assertEquals("test", interpolator.interpolate("#(test)"));
+    }
+
+    @Test
+    void cacheAnswersTrue() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
+        ctx.put("key", "value");
+
+        final int[] valueSourceCallCount = {0};
+
+        ValueSource vs = new AbstractValueSource(false) {
+            @Override
+            public Object getValue(String expression) {
+                valueSourceCallCount[0]++;
+                return ctx.get(expression);
+            }
+        };
+
+        MultiDelimiterStringSearchInterpolator interpolator = new MultiDelimiterStringSearchInterpolator();
+        interpolator.setCacheAnswers(true);
+        interpolator.addValueSource(vs);
+
+        String result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+
+        assertEquals("value-value-value-value", result);
+        // first value is interpolated and saved, then the 3 next answers came from existing answer Map
+        assertEquals(1, valueSourceCallCount[0]);
+
+        // answers are preserved between calls:
+        result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+        assertEquals("value-value-value-value", result);
+        // still 1 from first call as cache is preserved
+        assertEquals(1, valueSourceCallCount[0]);
+    }
+
+    @Test
+    void cacheAnswersFalse() throws Exception {
+        Map<String, String> ctx = new HashMap<>();
+        ctx.put("key", "value");
+
+        final int[] valueSourceCallCount = {0};
+
+        ValueSource vs = new AbstractValueSource(false) {
+            @Override
+            public Object getValue(String expression) {
+                valueSourceCallCount[0]++;
+                return ctx.get(expression);
+            }
+        };
+
+        MultiDelimiterStringSearchInterpolator interpolator = new MultiDelimiterStringSearchInterpolator();
+        interpolator.addValueSource(vs);
+
+        String result = interpolator.interpolate("${key}-${key}-${key}-${key}");
+
+        assertEquals("value-value-value-value", result);
+        // Without caching, expressions are evaluated multiple times due to multi-pass resolution
+        // In this case: 4 expressions evaluated in 2 passes = 8 calls
+        assertEquals(8, valueSourceCallCount[0]);
     }
 }
