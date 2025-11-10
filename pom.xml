@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>plexus-interpolation</artifactId>
-  <version>1.29-SNAPSHOT</version>
+  <version>1.30-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>Plexus Interpolation API</name>
@@ -33,7 +33,7 @@
   </distributionManagement>
 
   <properties>
-    <project.build.outputTimestamp>2025-04-05T08:27:27Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-11-07T17:42:43Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
@@ -45,16 +45,6 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- remove with parent update, fix for ${localRepository} -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.9.0</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
